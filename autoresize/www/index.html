@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>autoresize</title>
+	<script type="text/javascript" src="/www/js/swfobject.js"></script>
+	<!--script type="text/javascript" src="/www/js/swfaddress.js"></script-->
+	<style type="text/css" media="screen">@import url(/www/css/main.css);</style>
+	<script type="text/javascript">
+	var Rascut = new Object;
+
+    Rascut.xhr = (function() {
+      if (typeof XMLHttpRequest != 'undefined') {
+        return new XMLHttpRequest();
+      } else {
+        try {
+          return new ActiveXObject("Msxml2.XMLHTTP");
+        } catch(e) {
+          return new ActiveXObject("Microsoft.XMLHTTP");
+        }
+      }
+    })();
+
+    Rascut.reloadObserver = function() {
+        var x = Rascut.xhr;
+        x.open('GET', '/reload?' + (new Date()).getTime(), true);
+        x.onreadystatechange = function() {
+          try {
+            if (x.readyState == 4) {
+              if (x.status == 200 && Number(x.responseText) == 1) {
+                // thanks os0x!
+                so.attributes.swf = so.attributes.swf + '+';
+                so.write('content');
+                Rascut.reloadObserver();
+              } else {
+                setTimeout(Rascut.reloadObserver, 5000);
+              }
+            }
+          } catch(e) {
+            setTimeout(Rascut.reloadObserver, 5000);
+          }
+        } 
+        x.send(null);
+    }
+
+    Rascut.swf = function() {
+       return document.getElementById('idswf');
+    }
+
+    Rascut.reloadObserver();
+    </script>
+
+</head>
+<body>
+	<div id="content"></div>
+
+	<script type="text/javascript">
+		var so = new SWFObject("/swf/autoresize.swf?" + (new Date()).getTime(), "idswf", "100%", "100%", '9', '');;
+		window.onload = function() {
+         
+		so.addVariable('rascut', 'true');
+		so.addParam('allowFullScreen', 'true');
+		so.addParam('allowScriptAccess', 'always');
+		so.write("content");
+		}
+      </script>
+</body>
+</html>
